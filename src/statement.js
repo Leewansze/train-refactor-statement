@@ -1,21 +1,11 @@
 function statement(invoice, plays) {
-    let totalAmount = 0;
-    let volumeCredits = 0;
     let result = `Statement for ${invoice.customer}\n`;
+    let volumeCredits = 0;
+    let totalAmount = 0;
     const format = formatUsd();
     for (let perf of invoice.performances) {
         const play = getPlaysId(plays, perf);
-        let thisAmount = 0;
-        switch (play.type) {
-            case 'tragedy':
-                thisAmount = tragedyStrategy(perf);
-                break;
-            case 'comedy':
-                thisAmount = comedyStrategy(perf);
-                break;
-            default:
-                throw new Error(`unknown type: ${play.type}`);
-        }
+        let thisAmount = caculateAmount(perf, play);
         // add volume credits
         volumeCredits += caculateCredits(perf, play);
         //print line for this order
@@ -30,6 +20,21 @@ function statement(invoice, plays) {
 module.exports = {
     statement,
 };
+
+function caculateAmount(perf, play) {
+    let thisAmount = 0;
+    switch (play.type) {
+        case 'tragedy':
+            thisAmount = tragedyStrategy(perf);
+            break;
+        case 'comedy':
+            thisAmount = comedyStrategy(perf);
+            break;
+        default:
+            throw new Error(`unknown type: ${play.type}`);
+    }
+    return thisAmount;
+}
 
 function getPlaysId(plays, perf) {
     return plays[perf.playID];
