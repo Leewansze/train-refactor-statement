@@ -8,17 +8,10 @@ function statement(invoice, plays) {
         let thisAmount = 0;
         switch (play.type) {
             case 'tragedy':
-                thisAmount = 40000;
-                if (perf.audience > 30) {
-                    thisAmount += 1000 * (perf.audience - 30);
-                }
+                thisAmount = tragedyStrategy(perf);
                 break;
             case 'comedy':
-                thisAmount = 30000;
-                if (perf.audience > 20) {
-                    thisAmount += 10000 + 500 * (perf.audience - 20);
-                }
-                thisAmount += 300 * perf.audience;
+                thisAmount = comedyStrategy(perf);
                 break;
             default:
                 throw new Error(`unknown type: ${play.type}`);
@@ -37,6 +30,23 @@ function statement(invoice, plays) {
 module.exports = {
     statement,
 };
+
+function comedyStrategy(perf) {
+    let thisAmount = 30000;
+    if (perf.audience > 20) {
+        thisAmount += 10000 + 500 * (perf.audience - 20);
+    }
+    thisAmount += 300 * perf.audience;
+    return thisAmount;
+}
+
+function tragedyStrategy(perf) {
+    let thisAmount = 40000;
+    if (perf.audience > 30) {
+        thisAmount += 1000 * (perf.audience - 30);
+    }
+    return thisAmount;
+}
 
 function caculateCredits(perf, play) {
     let credit = Math.max(perf.audience - 30, 0);
