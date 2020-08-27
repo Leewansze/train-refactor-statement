@@ -17,7 +17,7 @@ test('Sample test', t => {
 //  t.is(result, '');
 //});
 
-test('Statement case 1. Customer BigCo without performance.', t =>{
+test('Customer BigCo without performance.', t =>{
   //given
   const invoice = {
     'customer': 'BigCo',
@@ -27,6 +27,42 @@ test('Statement case 1. Customer BigCo without performance.', t =>{
   const result = statement(invoice, plays);
   //then
   t.is(result, 'Statement for BigCo\nAmount owed is $0.00\nYou earned 0 credits \n')
+})
+
+test('Customer BigCo has one performance hamlet and audience is 30', t => {
+  //given
+  const invoice = {
+    'customer': 'BigCo',
+    'performances': [
+      {
+        'playID': 'hamlet',
+        'audience': 30,
+      }
+    ],
+  };
+  //when
+  const result = statement(invoice, plays);
+  //then
+  t.is(result,'Statement for BigCo\n'+
+    ' Hamlet: $400.00 (30 seats)\nAmount owed is $400.00\nYou earned 0 credits \n')
+})
+
+test('Customer BigCo has one performance as-like and audience is 20', t => {
+  //given
+  const invoice = {
+    'customer': 'BigCo',
+    'performances': [
+      {
+        'playID': 'as-like',
+        'audience': 20,
+      }
+    ],
+  };
+  //when
+  const result = statement(invoice, plays)
+  //then
+  t.is(result, 'Statement for BigCo\n'+
+                   ' As You Like It: $360.00 (20 seats)\nAmount owed is $360.00\nYou earned 4 credits \n')
 })
 
 
