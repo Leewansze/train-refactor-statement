@@ -4,7 +4,7 @@ function statement(invoice, plays) {
     let result = `Statement for ${invoice.customer}\n`;
     const format = formatUsd();
     for (let perf of invoice.performances) {
-        const play = plays[perf.playID];
+        const play = getPlaysId(plays, perf);
         let thisAmount = 0;
         switch (play.type) {
             case 'tragedy':
@@ -30,6 +30,10 @@ function statement(invoice, plays) {
 module.exports = {
     statement,
 };
+
+function getPlaysId(plays, perf) {
+    return plays[perf.playID];
+}
 
 function comedyStrategy(perf) {
     let thisAmount = 30000;
