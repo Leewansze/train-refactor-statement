@@ -2,8 +2,13 @@ function statement(invoice, plays) {
     return getTextResult(invoice, plays);
 }
 
+function htmlStatement(invoice, plays) {
+    return getHtmlResult(invoice, plays);
+}
+
 module.exports = {
     statement,
+    htmlStatement,
 };
 
 function getTextResult(invoice, plays) {
@@ -85,14 +90,21 @@ function formatUsd() {
     }).format;
 }
 
-// function getHtmlResult(invoice, plays) {
-//     var result = '<h1>Statement for BigCo</h1>\n' +
-//         '<table>\n' +
-//         '<tr><th>play</th><th>seats</th><th>cost</th></tr>' +
-//         ' <tr><td>Hamlet</td><td>55</td><td>$650.00</td></tr>\n' +
-//         ' <tr><td>As You Like It</td><td>35</td><td>$580.00</td></tr>\n' +
-//         ' <tr><td>Othello</td><td>40</td><td>$500.00</td></tr>\n' +
-//         '</table>\n' +
-//         '<p>Amount owed is <em>$1,730.00</em></p>\n' +
-//         '<p>You earned <em>47</em> credits</p>\n'
-// }
+function getHtmlResult(invoice, plays) {
+    let thisAmount = 0;
+    // let result = `Statement for ${invoice.customer}\n`;
+    let result = `<h1>Statement for ${invoice.customer}</h1>\n<table>\n<tr><th>play</th><th>seats</th><th>cost</th></tr>`;
+    const format = formatUsd();
+    let totalAmount = calculateTotalAmount(invoice, plays);
+    for (let perf of invoice.performances) {
+        const play = getPlaysId(plays, perf);
+        thisAmount = calculateAmount(perf, play);
+        result += ` <tr><td>${play.name}</td><td>${perf.audience}</td><td>${format(thisAmount / 100)}</td></tr>\n`;
+        // result += ` ${play.name}: ${format(thisAmount / 100)} (${perf.audience} seats)\n`;
+    }
+    // result += `Amount owed is ${format(totalAmount / 100)}\n`;
+    // result += `You earned ${calculateCredits(invoice, plays)} credits \n`;
+    result += `</table>\n<p>Amount owed is <em>${format(totalAmount / 100)}</em></p>\n<p>You earned <em>${calculateCredits(invoice, plays)}</em> credits</p>\n`
+    return result;
+    return result;
+}
